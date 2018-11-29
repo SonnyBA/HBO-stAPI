@@ -34,14 +34,18 @@ namespace PoohAPI.Controllers
         /// <param name="cityName">The city name where the vacancy is located in</param>
         /// <param name="countryName">The coutry name where the vacancy is located in</param>
         /// <param name="locationRange">The range where the vacancies must be retrieved within</param>
+        /// <param name="isActive">Wether the vacancies need to be active or not.</param>
+
         /// <returns>A list of all vacancies</returns>
         /// <response code="200">Returns the list of vacancies</response>
         /// <response code="404">If no vacancies are found</response>   
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Vacancy>), 200)]
         [ProducesResponseType(404)]
-        public IActionResult GetAll([FromQuery]int maxCount = 5, [FromQuery]int offset = 0, [FromQuery]string additionalLocationSearchTerms = null, [FromQuery]int? educationId = null, [FromQuery]int? educationalAttainmentId = null, [FromQuery]IntershipType? internshipType = null, [FromQuery]int? languageId = null, [FromQuery]string cityName = null, [FromQuery]string countryName = null, [FromQuery]int? locationRange = null)
+        public IActionResult GetAll([FromQuery]int maxCount = 5, [FromQuery]int offset = 0, [FromQuery]string additionalLocationSearchTerms = null, [FromQuery]int? educationId = null, [FromQuery]int? educationalAttainmentId = null, [FromQuery]IntershipType? internshipType = null, [FromQuery]int? languageId = null, [FromQuery]string cityName = null, [FromQuery]string countryName = null, [FromQuery]int? locationRange = null, bool isActive = true)
         {
+            int active = 0;
+
             if (maxCount < 0 || maxCount > 100)
             {
                 return BadRequest("MaxCount should be between 1 and 100");
@@ -52,7 +56,15 @@ namespace PoohAPI.Controllers
                 return BadRequest("Offset should be 0 or larger");
             }
 
-            IEnumerable<Vacancy> vacancies = this.vacancyReadService.GetListVacancies(maxCount, offset, additionalLocationSearchTerms, educationId, educationalAttainmentId, internshipType, languageId, cityName, countryName, locationRange);
+            if (isActive)
+            {
+                active = 1;
+            } else
+            {
+                active = 0;
+            }
+
+            IEnumerable<Vacancy> vacancies = this.vacancyReadService.GetListVacancies(maxCount, offset, additionalLocationSearchTerms, educationId, educationalAttainmentId, internshipType, languageId, cityName, countryName, locationRange, active);
 
             if (!(vacancies is null))
             {
