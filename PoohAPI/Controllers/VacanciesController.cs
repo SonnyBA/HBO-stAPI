@@ -42,10 +42,8 @@ namespace PoohAPI.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Vacancy>), 200)]
         [ProducesResponseType(404)]
-        public IActionResult GetAll([FromQuery]int maxCount = 5, [FromQuery]int offset = 0, [FromQuery]string additionalLocationSearchTerms = null, [FromQuery]int? educationId = null, [FromQuery]int? educationalAttainmentId = null, [FromQuery]IntershipType? internshipType = null, [FromQuery]int? languageId = null, [FromQuery]string cityName = null, [FromQuery]string countryName = null, [FromQuery]int? locationRange = null, bool isActive = true)
+        public IActionResult GetAll([FromQuery]int maxCount = 5, [FromQuery]int offset = 0, [FromQuery]string additionalLocationSearchTerms = null, [FromQuery]int? educationId = null, [FromQuery]int? educationalAttainmentId = null, [FromQuery]IntershipType? internshipType = null, [FromQuery]int? languageId = null, [FromQuery]string cityName = null, [FromQuery]string countryName = null, [FromQuery]int? locationRange = null, [FromQuery]int isActive = 1)
         {
-            int active = 0;
-
             if (maxCount < 0 || maxCount > 100)
             {
                 return BadRequest("MaxCount should be between 1 and 100");
@@ -56,15 +54,7 @@ namespace PoohAPI.Controllers
                 return BadRequest("Offset should be 0 or larger");
             }
 
-            if (isActive)
-            {
-                active = 1;
-            } else
-            {
-                active = 0;
-            }
-
-            IEnumerable<Vacancy> vacancies = this.vacancyReadService.GetListVacancies(maxCount, offset, additionalLocationSearchTerms, educationId, educationalAttainmentId, internshipType, languageId, cityName, countryName, locationRange, active);
+            IEnumerable<Vacancy> vacancies = this.vacancyReadService.GetListVacancies(maxCount, offset, additionalLocationSearchTerms, educationId, educationalAttainmentId, internshipType, languageId, cityName, countryName, locationRange, isActive);
 
             if (!(vacancies is null))
             {
