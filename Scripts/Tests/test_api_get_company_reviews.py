@@ -13,7 +13,6 @@ def f_test_status_code_200(request):
     assert request.status_code == 200
 
 
-
 base_url = ''
 companies_path = "companies"
 
